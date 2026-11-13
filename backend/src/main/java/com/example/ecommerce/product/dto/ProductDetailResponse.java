@@ -18,9 +18,10 @@ public record ProductDetailResponse(
         String shopName,
         Long categoryId,
         String categoryName,
-        List<SkuResponse> skus) {
+        List<SkuResponse> skus,
+        List<ImageResponse> images) {
 
-    public static ProductDetailResponse from(Product product, List<SkuResponse> skus) {
+    public static ProductDetailResponse from(Product product, List<SkuResponse> skus, List<ImageResponse> images) {
         Category category = product.getCategory();
         return new ProductDetailResponse(
                 product.getId(),
@@ -34,6 +35,7 @@ public record ProductDetailResponse(
                 product.getShop().getName(),
                 category != null ? category.getId() : null,
                 category != null ? category.getName() : null,
-                skus);
+                skus,
+                images);
     }
 }

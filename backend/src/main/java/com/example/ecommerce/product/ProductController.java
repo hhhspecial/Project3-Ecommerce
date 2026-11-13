@@ -23,9 +23,13 @@ public class ProductController {
 
     @GetMapping
     public ApiResponse<PageResponse<ProductResponse>> getProducts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long shopId,
+            @RequestParam(defaultValue = "newest") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ApiResponse.ok(productService.getProducts(page, size));
+        return ApiResponse.ok(productService.getProducts(keyword, categoryId, shopId, sort, page, size));
     }
 
     @GetMapping("/{id}")

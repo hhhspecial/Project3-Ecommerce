@@ -14,9 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.ecommerce.common.PageResponse;
 import com.example.ecommerce.common.exception.ResourceNotFoundException;
+import com.example.ecommerce.product.dto.ImageResponse;
 import com.example.ecommerce.product.dto.ProductDetailResponse;
 import com.example.ecommerce.product.dto.ProductResponse;
 import com.example.ecommerce.product.dto.SkuResponse;
+import com.example.ecommerce.product.ProductImageRepository;
 
 @Service
 public class ProductService {
@@ -25,20 +27,25 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductSkuRepository productSkuRepository;
+    private final ProductImageRepository productImageRepository;
 
-    public ProductService(ProductRepository productRepository,ProductSkuRepository productSkuRepository) {
+    public ProductService(ProductRepository productRepository,ProductSkuRepository productSkuRepository, ProductImageRepository productImageRepository) {
         this.productRepository = productRepository;
         this.productSkuRepository = productSkuRepository;
+        this.productImageRepository = productImageRepository;
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<ProductResponse> getProducts(int page, int size) {
+    public PageResponse<ProductResponse> getProducts(String keyword, Long categoryId, Long shopId, String sort, int page, int size) {
         int safePage = Math.max(page, 0);
         int safeSize = Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
         Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by("id").descending());
 
-        Page<Product> products = productRepository
-                .findByStatusAndDeletedAtIsNull(ProductStatus.ACTIVE, pageable);
+        String normalizedKeyword = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
+        String safeSort = ("price_asc".equals(sort) || "price_desc".equals(sort)) ? sort : "newest";
+
+        Page<Product> products = productRepository.search(ProductStatus.ACTIVE, normalizedKeyword, categoryId, shopId, safeSort, pageable);
+        
         
         List<Long> productIds = products.getContent().stream()
         .map(Product::getId)
@@ -63,6 +70,11 @@ public class ProductService {
         List<SkuResponse> skus = productSkuRepository.findByProductIdOrderByPriceAsc(id).stream()
                 .map(SkuResponse::from)
                 .toList();
-        return ProductDetailResponse.from(product, skus);
+
+        List<ImageResponse> images = productImageRepository.findByProductIdOrderBySortOrderAsc(id).stream()
+                .map(ImageResponse::from)
+                .toList();
+
+        return ProductDetailResponse.from(product, skus, images);
     }
 }
