@@ -38,6 +38,22 @@ public class Shop extends BaseEntity {
     protected Shop() {
     }
 
+    public Shop(Long ownerUserId, String name, String description) {
+        this.ownerUserId = ownerUserId;
+        this.name = name;
+        this.description = description;
+        this.status = ShopStatus.PENDING;
+    }
+
+    public void update(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public void approve() {
+        this.status = ShopStatus.ACTIVE;
+    }
+
     public Long getId() {
         return id;
     }

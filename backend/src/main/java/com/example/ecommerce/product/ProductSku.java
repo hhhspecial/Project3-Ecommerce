@@ -6,12 +6,9 @@ import com.example.ecommerce.common.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,9 +19,8 @@ public class ProductSku extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @Column(name = "product_id", nullable = false)
+    private Long productId;
 
     @Column(name = "sku_code", nullable = false, length = 100)
     private String skuCode;
@@ -47,38 +43,33 @@ public class ProductSku extends BaseEntity {
     protected ProductSku() {
     }
 
-    public Long getId() {
-        return id;
+    public ProductSku(Long productId, String skuCode, String variantName,
+                      String color, String size, BigDecimal price, int stockQuantity) {
+        this.productId = productId;
+        this.skuCode = skuCode;
+        this.variantName = variantName;
+        this.color = color;
+        this.size = size;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
     }
 
-    public Product getProduct() {
-        return product;
+    public void update(String skuCode, String variantName, String color,
+                       String size, BigDecimal price, int stockQuantity) {
+        this.skuCode = skuCode;
+        this.variantName = variantName;
+        this.color = color;
+        this.size = size;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
     }
 
-    public String getSkuCode() {
-        return skuCode;
-    }
-
-    public String getVariantName() {
-        return variantName;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public int getStockQuantity() {
-        return stockQuantity;
-    }
-
-    // getter cho tất cả các trường (Source Action → Generate Getters and Setters)
-    
+    public Long getId() { return id; }
+    public Long getProductId() { return productId; }
+    public String getSkuCode() { return skuCode; }
+    public String getVariantName() { return variantName; }
+    public String getColor() { return color; }
+    public String getSize() { return size; }
+    public BigDecimal getPrice() { return price; }
+    public int getStockQuantity() { return stockQuantity; }
 }

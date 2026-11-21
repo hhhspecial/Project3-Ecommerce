@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.ecommerce.common.exception.ResourceNotFoundException;
+import com.example.ecommerce.user.dto.UpdateProfileRequest;
+import com.example.ecommerce.user.dto.UserResponse;
 
 import java.util.Optional;
 
@@ -42,5 +44,27 @@ public class UserService {
     public User getById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getProfile(Long userId) {
+        return UserResponse.from(getById(userId));
+    }
+
+    @Transactional
+    public UserResponse updateProfile(Long userId, UpdateProfileRequest request) {
+        User user = getById(userId);
+        user.updateProfile(
+                request.firstName(),
+                request.lastName(),
+                request.phoneNumber(),
+                request.birthDate());
+        return UserResponse.from(user);
+    }
+
+    @Transactional
+    public void promoteToSeller(Long userId) {
+        User user = getById(userId);
+        user.changeRole(Role.SELLER);
     }
 }

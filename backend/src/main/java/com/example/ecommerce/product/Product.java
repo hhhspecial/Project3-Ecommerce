@@ -62,6 +62,37 @@ public class Product extends BaseEntity {
     protected Product() {
     }
 
+    public Product(Shop shop, Category category, String name,
+                   String summary, String description) {
+        this.shop = shop;
+        this.category = category;
+        this.name = name;
+        this.summary = summary;
+        this.description = description;
+        this.status = ProductStatus.DRAFT;
+        this.avgRating = BigDecimal.ZERO;
+        this.reviewCount = 0;
+    }
+
+    public void update(String name, String summary, String description, Category category) {
+        this.name = name;
+        this.summary = summary;
+        this.description = description;
+        this.category = category;
+    }
+
+    public void changeCover(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
+
+    public void changeStatus(ProductStatus status) {
+        this.status = status;
+    }
+
+    public void markDeleted() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,5 +1,6 @@
 package com.example.ecommerce.user;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.example.ecommerce.common.BaseEntity;
@@ -47,6 +48,15 @@ public class User extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(name = "avatar_url", length = 500)
+    private String avatarUrl;
+
     protected User() {
     }
 
@@ -61,6 +71,17 @@ public class User extends BaseEntity {
         this.status = UserStatus.ACTIVE;
     }
 
+    public void updateProfile(String firstName, String lastName,
+                            String phoneNumber, LocalDate birthDate) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.birthDate = birthDate;
+    }
+    
+    public void changeRole(Role role) {
+        this.role = role;
+    }
     public Long getId() {
         return id;
     }
@@ -96,6 +117,20 @@ public class User extends BaseEntity {
     public LocalDateTime getDeletedAt() {
         return deletedAt;
     }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    
 
     // getter cho: id, username, email, passwordHash, role, firstName, lastName, status, deletedAt
     

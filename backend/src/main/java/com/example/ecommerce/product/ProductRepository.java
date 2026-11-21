@@ -17,6 +17,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(attributePaths = {"shop", "category"})
     Optional<Product> findByIdAndStatusAndDeletedAtIsNull(Long id, ProductStatus status);
 
+    Optional<Product> findByIdAndShopIdAndDeletedAtIsNull(Long id, Long shopId);
+
+    Page<Product> findByShopIdAndDeletedAtIsNull(Long shopId, Pageable pageable);
+
+    Page<Product> findByShopIdAndStatusAndDeletedAtIsNull(Long shopId, ProductStatus status, Pageable pageable);
+
     
 
         @Query(value = "select p from Product p "
@@ -25,8 +31,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 + "and (:categoryId is null or p.category.id = :categoryId) "
                 + "and (:shopId is null or p.shop.id = :shopId) "
                 + "order by "
-                + "case when :sort = 'price_asc' then (select min(s.price) from ProductSku s where s.product = p) end asc, "
-                + "case when :sort = 'price_desc' then (select min(s.price) from ProductSku s where s.product = p) end desc, "
+                + "case when :sort = 'price_asc' then (select min(s.price) from ProductSku s where s.productId = p.id) end asc, "
+                + "case when :sort = 'price_desc' then (select min(s.price) from ProductSku s where s.productId = p.id) end desc, "
                 + "p.id desc",
                 countQuery = "select count(p) from Product p "
                 + "where p.status = :status and p.deletedAt is null "
